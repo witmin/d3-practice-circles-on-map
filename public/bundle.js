@@ -6280,7 +6280,7 @@ const loadAndProcessData = () =>
             const featuresWithPopulation = countries.features
                 .filter(d => d.properties['2020'])
                 .map(d => {
-                    d.properties['2020'] = +d.properties['2020'].replace(/ /g, '');
+                    d.properties['2020'] = +d.properties['2020'].replace(/ /g, '') * 1000;
                     return d;
                 });
 
@@ -6289,10 +6289,44 @@ const loadAndProcessData = () =>
             return {countries, featuresWithPopulation};
         });
 
+const sizeLegend = (selection, props) => {
+    const {
+        sizeScale,
+        spacing,
+        textOffset,
+        numTicks,
+        tickFormat
+    } = props;
+    const ticks = sizeScale.ticks(numTicks).filter(d => d !== 0).reverse();
+
+
+    const groups = selection.selectAll('g')
+        .data(ticks);
+    const groupEnter = groups.enter().append('g');
+    groupEnter.merge(groups)
+        .attr('transform', (d, i) => `translate(0, ${i * spacing})`);
+
+    groups.exit().remove();
+
+    // Enter & Update
+    groupEnter.append('circle')
+        .merge(groups.select('circle'))
+        .attr('class', 'tick-circle')
+        .attr('r', d => sizeScale(d));
+
+    groupEnter.append('text')
+        .attr('x', d => sizeScale(d) + textOffset)
+        .attr('dy', '0.32em')
+        .merge(groups.select('text'))
+        .text(tickFormat);
+
+};
+
 const projection$1 = geoNaturalEarth1();
 const pathGenerator = geoPath().projection(projection$1);
-sqrt$1();
+const sizeScale = sqrt$1();
 const radiusValue = d => d.properties['2020'];
+const populationFormat = format(',');
 
 const choroplethMap = (selection, props) => {
     const {
@@ -6316,9 +6350,19 @@ const choroplethMap = (selection, props) => {
         g.attr('transform', event.transform);
     }));
 
-    const radiusScale = sqrt$1()
-        .domain([0, max(featuresWithPopulation, radiusValue)])
+    sizeScale.domain([0, max(featuresWithPopulation, radiusValue)])
         .range([0, 32]);
+
+    // Draw Size Legend
+    selection.append('g')
+        .attr('transform', `translate(80, 200)`)
+        .call(sizeLegend, {
+            sizeScale,
+            spacing: 40,
+            textOffset: 10,
+            numTicks: 5,
+            tickFormat: populationFormat
+        });
 
     const countryPaths = g.selectAll('.country').data(features);
     const countryPathsEnter = countryPaths
@@ -6328,10 +6372,10 @@ const choroplethMap = (selection, props) => {
     countryPaths
         .merge(countryPathsEnter)
         .attr('d', pathGenerator)
-        .attr('fill', d => d.properties['2020'] ? 'green' : 'red');
+        .attr('fill', d => d.properties['2020'] ? '#dddddd' : '#e5d8d8');
 
     countryPathsEnter.append('title')
-        .text(d => d.properties.name + ': ' + d.id);
+        .text(d => d.properties['Region, subregion, country or area *'] + ': ' + populationFormat(radiusValue(d)));
 
     featuresWithPopulation.forEach(d => {
         d.properties.projected = projection$1(geoCentroid(d));
@@ -6341,8 +6385,7 @@ const choroplethMap = (selection, props) => {
         .attr('class', 'country-circle')
         .attr('cx', d => d.properties.projected[0])
         .attr('cy', d => d.properties.projected[1])
-        .attr('r', d => radiusScale(radiusValue(d)));
-
+        .attr('r', d => sizeScale(radiusValue(d)));
 };
 
 const width = document.body.clientWidth;
@@ -6354,10 +6397,7 @@ svg
     .attr('height', height)
     .append('rect');
 
-svg.append('g');
 const choroplethMapG = svg.append('g');
-svg.append('g')
-    .attr('transform', `translate(40, 280)`);
 
 let selectedColorValue;
 let features;

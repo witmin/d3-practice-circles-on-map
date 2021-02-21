@@ -7,11 +7,11 @@ This repository used [rollup.js](https://rollupjs.org/) as the JavaScript module
 ### Population Data source
 https://population.un.org/wpp/Download/Standard/Population/
 
-# Interactive Choropleth Map source code
-https://vizhub.com/curran/5c907e49d0294538aad03ad1f41e1e28?edit=files&file=index.js&mode=mini
+# Circles on a Map source code
+https://vizhub.com/curran/8704c9b7c6df43cabf839aa3f1cb7b70?edit=files&file=index.js&mode=mini
 
-### Issue
-The legend contains an emp`ty item which caused by to a 'undefined' colorScale domain data type which shouldn't be there. 
+### Demo
+![Demo](/screenshot/demo.png)
 
 ## View the outcome
 Open `public/index.html` in modern browser such as Chrome or Firefox directly. 

@@ -11,18 +11,11 @@ body {
 }
 
 .sphere {
-    fill: #69b7fd;
+    fill: #f0f8fc;
 }
 
 .country {
-    stroke: black;
-    stroke-opacity: 0.3;
-}
-
-.country-circle {
-    fill: #b6ecee;
-    fill-opacity: 0.6;
-    stroke: #135b5d;
+    stroke: #8f8f8f;
     stroke-opacity: 0.3;
 }
 
@@ -47,4 +40,12 @@ text {
 
 .tick{
     cursor:pointer;
+}
+
+.tick-circle, .country-circle {
+    fill: #83E2E3;
+    fill-opacity: 0.8;
+    stroke: #215656;
+    stroke-opacity: 0.5;
+    pointer-events: none;
 }

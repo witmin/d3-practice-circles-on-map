@@ -1,9 +1,11 @@
-import {geoPath, geoNaturalEarth1, zoom, geoCentroid, scaleSqrt, max} from 'd3';
+import {geoPath, geoNaturalEarth1, zoom, geoCentroid, scaleSqrt, max, format} from 'd3';
+import {sizeLegend} from "./sizeLegend";
 
 const projection = geoNaturalEarth1();
 const pathGenerator = geoPath().projection(projection);
-const radiusScale = scaleSqrt();
+const sizeScale = scaleSqrt();
 const radiusValue = d => d.properties['2020'];
+const populationFormat = format(',');
 
 export const choroplethMap = (selection, props) => {
     const {
@@ -27,9 +29,19 @@ export const choroplethMap = (selection, props) => {
         g.attr('transform', event.transform);
     }));
 
-    const radiusScale = scaleSqrt()
-        .domain([0, max(featuresWithPopulation, radiusValue)])
+    sizeScale.domain([0, max(featuresWithPopulation, radiusValue)])
         .range([0, 32]);
+
+    // Draw Size Legend
+    selection.append('g')
+        .attr('transform', `translate(80, 200)`)
+        .call(sizeLegend, {
+            sizeScale,
+            spacing: 40,
+            textOffset: 10,
+            numTicks: 5,
+            tickFormat: populationFormat
+        })
 
     const countryPaths = g.selectAll('.country').data(features);
     const countryPathsEnter = countryPaths
@@ -39,10 +51,10 @@ export const choroplethMap = (selection, props) => {
     countryPaths
         .merge(countryPathsEnter)
         .attr('d', pathGenerator)
-        .attr('fill', d => d.properties['2020'] ? 'green' : 'red');
+        .attr('fill', d => d.properties['2020'] ? '#dddddd' : '#e5d8d8');
 
     countryPathsEnter.append('title')
-        .text(d => d.properties.name + ': ' + d.id);
+        .text(d => d.properties['Region, subregion, country or area *'] + ': ' + populationFormat(radiusValue(d)));
 
     featuresWithPopulation.forEach(d => {
         d.properties.projected = projection(geoCentroid(d));
@@ -52,6 +64,5 @@ export const choroplethMap = (selection, props) => {
         .attr('class', 'country-circle')
         .attr('cx', d => d.properties.projected[0])
         .attr('cy', d => d.properties.projected[1])
-        .attr('r', d => radiusScale(radiusValue(d)));
-
+        .attr('r', d => sizeScale(radiusValue(d)));
 }

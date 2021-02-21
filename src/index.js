@@ -21,6 +21,7 @@ const colorValue = d => d.properties.economy;
 
 let selectedColorValue;
 let features;
+let featuresWithPop;
 
 const onClick = (event, d) => {
     selectedColorValue = d;
@@ -28,14 +29,17 @@ const onClick = (event, d) => {
     render();
 };
 
-loadAndProcessData().then(countries => {
+loadAndProcessData().then(
+    ({countries, featuresWithPopulation}) => {
     features = countries.features;
+    featuresWithPop = featuresWithPopulation
     render();
 });
 
 const render = () => {
     choroplethMapG.call(choroplethMap, {
         features,
+        featuresWithPopulation: featuresWithPop,
         selectedColorValue
     });
 }

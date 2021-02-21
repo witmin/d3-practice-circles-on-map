@@ -7,7 +7,7 @@ export const loadAndProcessData = () =>
         json('./visionscarto-110m.json')
     ])
         .then(([unData, topoJSONdata]) => {
-            console.log(unData);
+            // console.log(unData);
             const rowById = unData.reduce((accumulator, d) => {
                 accumulator[d['Country code']] = d;
                 return accumulator;
@@ -18,5 +18,14 @@ export const loadAndProcessData = () =>
                 Object.assign(d.properties, rowById[+d.id]);
             });
 
-            return countries;
+            const featuresWithPopulation = countries.features
+                .filter(d => d.properties['2020'])
+                .map(d => {
+                    d.properties['2020'] = +d.properties['2020'].replace(/ /g, '');
+                    return d;
+                });
+
+            console.log(featuresWithPopulation);
+
+            return {countries, featuresWithPopulation};
         });

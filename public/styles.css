@@ -19,6 +19,13 @@ body {
     stroke-opacity: 0.3;
 }
 
+.country-circle {
+    fill: #b6ecee;
+    fill-opacity: 0.6;
+    stroke: #135b5d;
+    stroke-opacity: 0.3;
+}
+
 .country.highlighted {
     stroke-width: 1px;
     stroke-opacity: 0.5;

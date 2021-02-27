@@ -28,5 +28,4 @@ export const sizeLegend = (selection, props) => {
         .attr('dy', '0.32em')
         .merge(groups.select('text'))
         .text(tickFormat);
-
 }

@@ -42,6 +42,11 @@ export const choroplethMap = (selection, props) => {
             numTicks: 5,
             tickFormat: populationFormat
         })
+        .append('text')
+        .attr('class', 'legend-title')
+        .text('Population')
+        .attr('x', -20)
+        .attr('y', -50);
 
     const countryPaths = g.selectAll('.country').data(features);
     const countryPathsEnter = countryPaths

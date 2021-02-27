@@ -49,3 +49,8 @@ text {
     stroke-opacity: 0.5;
     pointer-events: none;
 }
+
+.legend-title {
+    font-weight: bold;
+    font-size: 1.125rem;
+}

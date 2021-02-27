@@ -6319,7 +6319,6 @@ const sizeLegend = (selection, props) => {
         .attr('dy', '0.32em')
         .merge(groups.select('text'))
         .text(tickFormat);
-
 };
 
 const projection$1 = geoNaturalEarth1();
@@ -6362,7 +6361,12 @@ const choroplethMap = (selection, props) => {
             textOffset: 10,
             numTicks: 5,
             tickFormat: populationFormat
-        });
+        })
+        .append('text')
+        .attr('class', 'legend-title')
+        .text('Population')
+        .attr('x', -20)
+        .attr('y', -50);
 
     const countryPaths = g.selectAll('.country').data(features);
     const countryPathsEnter = countryPaths

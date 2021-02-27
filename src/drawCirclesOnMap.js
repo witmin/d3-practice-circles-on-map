@@ -54,7 +54,9 @@ export const choroplethMap = (selection, props) => {
         .attr('fill', d => d.properties['2020'] ? '#dddddd' : '#e5d8d8');
 
     countryPathsEnter.append('title')
-        .text(d => d.properties['Region, subregion, country or area *'] + ': ' + populationFormat(radiusValue(d)));
+        .text(d => isNaN(radiusValue(d))
+            ? 'Missing Data'
+            : (d.properties['Region, subregion, country or area *'] + ': ' + populationFormat(radiusValue(d))));
 
     featuresWithPopulation.forEach(d => {
         d.properties.projected = projection(geoCentroid(d));
